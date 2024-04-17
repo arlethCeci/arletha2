@@ -75,17 +75,16 @@ WSGI_APPLICATION = 'ventas.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'puntoven',
-        'USER': 'root',
-        'PASSWORD': 'cruz',
-        'PORT': 3306,
-        'HOST': 'localhost',
+        'USER': 'layonadmin',
+        'PASSWORD': 'ajbcer89912_',
+        'HOST': 'dbserverpuntoventa.mysql.database.azure.com',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
