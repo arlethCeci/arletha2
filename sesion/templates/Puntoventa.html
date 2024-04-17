@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
     <title>Punto de Venta</title>
     <style>
         /* Estilos para el menú */
@@ -131,39 +133,91 @@
     </style>
 </head>
 <body>
-    <div id="container">
-        <h1>Productos</h1>
-        <!-- Botones para agregar, editar e imprimir ticket -->
+     
+      <div id="carrito-container">
         <button id="agregar" onclick="irAFormularioAgregarVenta()">Agregar</button>
-        <div id="carrito-container">
-            <h2>Carrito de Compras</h2>
-            <div id="carrito"></div>
+        <h2>Compras</h2>
+        <div id="carrito">
+            <!-- Encabezados de los campos -->
+            <div class="carrito-item carrito-header">
+                <div>Producto</div>
+                <div>Precio</div>
+                <div>Cantidad</div>
+                <div>Total</div>
+                <button class="imprimir-ticket">Imprimir Ticket</button>
+            </div>
         </div>
     </div>
-
     <script>
-        function irAFormularioAgregarVenta() {
-            // Redirige a la página de agregar_venta
+          var jsPDF = window.jspdf.jsPDF;
+        function irAFormularioAgregarVenta() 
+        {   // Redirige a la página de agregar_venta
             window.location.href = "/agregar_venta/";
         }
-
-        // Recuperar datos del carrito del almacenamiento local
-        var productos_carrito = JSON.parse(localStorage.getItem('productos_carrito'));
-
-        // Verificar si hay productos almacenados
-        if (productos_carrito && productos_carrito.length > 0) {
-            // Recorrer y mostrar los productos en el carrito
-            productos_carrito.forEach(function(producto) {
-                var fila = '<div class="carrito-item" data-idVenVenta="' + producto.idVenVenta + '" data-idProProducto="' + producto.idProProducto + '">' +
-                               '<div class="carrito-item-nombre">' + producto.producto + '</div>' +
-                               '<div class="carrito-item-precio">$' + producto.precio.toFixed(2) + '</div>' +
-                               '<div class="carrito-item-cantidad">' + producto.cantidad + '</div>' +
-                               '<div class="carrito-item-total">$' + producto.total.toFixed(2) + '</div>' +
-                           '</div>';
-
-                $('#carrito').append(fila);
+        
+    
+        $(window).on('load', function() {
+            // Recuperar datos del carrito del almacenamiento local
+            var productos_carrito = JSON.parse(localStorage.getItem('productos_carrito'));
+    
+            // Verificar si hay productos almacenados
+            if (productos_carrito && Array.isArray(productos_carrito) && productos_carrito.length > 0) {
+                // Recorrer y mostrar los productos en el carrito
+                productos_carrito.forEach(function(producto) {
+                    var precio = producto.precio ? '$' + producto.precio.toFixed(2) : 'Precio no disponible';
+                    var total = producto.total ? producto.total.toFixed(2) : 'Total no disponible';
+                    var fila = '<div class="carrito-item" data-idProProducto="' + producto.idProProducto + '">' +
+                                   '<div class="carrito-item-nombre">' + producto.producto + '</div>' +
+                                   '<div class="carrito-item-precio">' + precio + '</div>' +
+                                   '<div class="carrito-item-cantidad">' + producto.cantidad + '</div>' +
+                                   '<div class="carrito-item-total">$' + total + '</div>' +
+                                   '<div>' +
+                                   '</div>' +
+                               '</div>';
+    
+                    $('#carrito').append(fila);
+                });
+            } else {
+                // Mostrar un mensaje si no hay productos en el carrito
+                $('#carrito').html('<p>No hay productos en el carrito.</p>');
+            }
+        });
+    
+        $('.imprimir-ticket').click(function() {
+            // Crear un nuevo objeto jsPDF
+            var doc = new jsPDF();
+    
+            // Encabezado del ticket
+            doc.text('Ticket de Compra', 10, 10);
+    
+            var startY = 30;
+            var lineHeight = 10;
+    
+            // Recorrer los productos del carrito
+            $('.carrito-item').each(function(index, element) {
+                var producto = $(this).find('.carrito-item-nombre').text();
+                var precio = $(this).find('.carrito-item-precio').text();
+                var cantidad = $(this).find('.carrito-item-cantidad').text();
+                var total = $(this).find('.carrito-item-total').text();
+    
+                var text = `${producto} - ${precio} - ${cantidad} - ${total}`;
+                
+                // Agregar la línea al PDF
+                doc.text(text, 10, startY + (index * lineHeight));
             });
-        }
+    
+            // Calcular y agregar el total
+            var totalAmount = 0;
+            $('.carrito-item-total').each(function() {
+                totalAmount += parseFloat($(this).text().replace('$', ''));
+            });
+    
+            // Agregar total al PDF
+            doc.text(`Total: $${totalAmount.toFixed(2)}`, 10, startY + ((lineHeight + 5) * $('.carrito-item').length));
+    
+            // Descargar el PDF
+            doc.save('ticket_compra.pdf');
+        });
     </script>
 
     <div class="menu-bar">

@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ingresar Venta</title>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
+
 
 <script>
-    var jsPDF = window.jspdf.jsPDF;
+ 
   // Función para actualizar la posición del botón de almacenar
   function actualizarBotonAlmacenar() {
     var boton = $('.almacenar-carrito');
@@ -48,6 +48,7 @@ function agregarAlCarrito(idVenVenta, idProProducto) {
     $('#agregar').data('idVenVenta', idVenVenta);
     $('#agregar').data('idProProducto', idProProducto);
 }
+
   
   $(document).ready(function() {
       // Restablecer los campos al cargar la página
@@ -111,6 +112,8 @@ function agregarAlCarrito(idVenVenta, idProProducto) {
               }
           });
       });
+    
+
   
       $('#producto').change(function() {
     var producto_id = $(this).val();
@@ -211,6 +214,7 @@ function agregarAlCarrito(idVenVenta, idProProducto) {
 
     // Almacenar datos del carrito en el almacenamiento local
     localStorage.setItem('productos_carrito', JSON.stringify(productos_carrito));
+    console.log('Productos almacenados:', productos_carrito);
 
     // Redirigir a la página "Punto de Venta"
     window.location.href = "/puntoventa/";
@@ -220,47 +224,12 @@ function agregarAlCarrito(idVenVenta, idProProducto) {
         }
     });
 });
-$(document).on('click', '.imprimir-ticket', function() {
-    // Crear un nuevo objeto jsPDF
-    var doc = new jsPDF();
-
-    // Encabezado del ticket
-    doc.text('Ticket de Compra', 10, 10);
-
-    var startY = 30;
-    var lineHeight = 10;
-
-    // Recorrer los productos del carrito
-    $('.carrito-item').each(function(index, element) {
-        var producto = $(this).find('.carrito-item-nombre').text();
-        var precio = $(this).find('.carrito-item-precio').text();
-        var cantidad = $(this).find('.carrito-item-cantidad').text();
-        var total = $(this).find('.carrito-item-total').text();
-
-        var text = `${producto} - ${precio} - ${cantidad} - ${total}`;
-        
-        // Agregar la línea al PDF
-        doc.text(text, 10, startY + (index * lineHeight));
-    });
-
-    // Calcular y agregar el total
-    var totalAmount = 0;
-    $('.carrito-item-total').each(function() {
-        totalAmount += parseFloat($(this).text().replace('$', ''));
-    });
-
-    // Agregar total al PDF
-    doc.text(`Total: $${totalAmount.toFixed(2)}`, 10, startY + ((lineHeight + 5) * $('.carrito-item').length));
-
-    // Descargar el PDF
-    doc.save('ticket_compra.pdf');
-});
-
 
 // Función para limpiar los campos después de almacenar los productos
 function limpiarCampos() {
     $('#idProCatCategoria, #idProCatSubCategoria, #producto, #precio, #stock, #cantidad, #total').val('');
 }
+
   
   </script>
 <style>
@@ -504,7 +473,7 @@ function limpiarCampos() {
       </div>
     </div>
     <button class="almacenar-carrito">Almacenar al carrito</button>
-    <button class="imprimir-ticket">Imprimir Ticket</button>
+   
 
   </div>
 </body>

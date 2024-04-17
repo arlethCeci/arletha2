@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 """
 URL configuration for ventas project.
 
@@ -41,18 +40,6 @@ urlpatterns = [
     path('logout/', sesion_views.logout_view, name='logout'),
     path('almacenar_carrito/', sesion_views.almacenar_carrito, name='almacenar_carrito'),
     path('principal/', sesion_views.principal, name='principal'),
+      path('almacenar_carrito/', sesion_views.almacenar_carrito, name='almacenar_carrito'),
 
 ]
-
-# Configuración para servir archivos multimedia
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-=======
-# En el archivo urls.py del proyecto principal
-from django.contrib import admin
-from django.urls import include, path
-
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('ventas/', include('ventas.urls')),  # Reemplaza 'tu_app' con el nombre de tu aplicación
-]
->>>>>>> 398472b (Primer commit en la rama main)
